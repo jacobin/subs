@@ -69,8 +69,8 @@ export async function mergeSubscriptions(
       ),
       total: subscriptions.reduce((sum, sub) => sum + sub.userInfo.total, 0),
       expire: subscriptions.reduce(
-        (max, sub) => Math.max(max, sub.userInfo.expire),
-        0,
+        (min, sub) => Math.min(min, sub.userInfo.expire),
+        Infinity,
       ),
     },
   };
