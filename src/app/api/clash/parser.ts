@@ -1,9 +1,21 @@
-import { parse } from "yaml";
+import { parse, stringify } from "yaml";
 import { groupProxies } from "./country";
 import { RULES, RULE_PROVIDERS } from "./rules";
 
 export interface Proxy {
   name: string;
+}
+
+export interface UserInfo {
+  upload: number;
+  download: number;
+  total: number;
+  expire: number;
+}
+
+export interface Subscription {
+  proxies: Proxy[];
+  userInfo: UserInfo;
 }
 
 const URL_TEST = {
@@ -12,12 +24,56 @@ const URL_TEST = {
   interval: 300,
 };
 
-export async function getProxies(url: string): Promise<Proxy[]> {
-  const response: Response = await fetch(url.toString());
+async function getProxies(response: Response): Promise<Proxy[]> {
   const text: string = await response.text();
   const yaml: any = parse(text);
   const proxies: Proxy[] = yaml.proxies;
   return proxies;
+}
+
+async function getUserInfo(response: Response): Promise<UserInfo> {
+  const userInfo: UserInfo = {
+    upload: 0,
+    download: 0,
+    total: 0,
+    expire: 0,
+  };
+  const header: string = response.headers.get("Subscription-Userinfo") || "";
+  console.log(header);
+  for (const pair of header.split(";")) {
+    const [key, value] = pair.split("=").map((s) => s.trim());
+    console.log(key, parseInt(value));
+    userInfo[key as keyof UserInfo] = parseInt(value);
+  }
+  return userInfo;
+}
+
+export async function fetchSubscription(url: string): Promise<Subscription> {
+  const response: Response = await fetch(url.toString());
+  return {
+    proxies: await getProxies(response),
+    userInfo: await getUserInfo(response),
+  };
+}
+
+export async function mergeSubscriptions(
+  subscriptions: Subscription[],
+): Promise<Subscription> {
+  return {
+    proxies: subscriptions.flatMap((sub) => sub.proxies),
+    userInfo: {
+      upload: subscriptions.reduce((sum, sub) => sum + sub.userInfo.upload, 0),
+      download: subscriptions.reduce(
+        (sum, sub) => sum + sub.userInfo.download,
+        0,
+      ),
+      total: subscriptions.reduce((sum, sub) => sum + sub.userInfo.total, 0),
+      expire: subscriptions.reduce(
+        (max, sub) => Math.max(max, sub.userInfo.expire),
+        0,
+      ),
+    },
+  };
 }
 
 export async function makeConfig(proxies: Proxy[]): Promise<any> {
@@ -57,4 +113,19 @@ export async function makeConfig(proxies: Proxy[]): Promise<any> {
     rules: RULES,
     "rule-providers": RULE_PROVIDERS,
   };
+}
+
+export async function makeResponse(
+  config: any,
+  userInfo: UserInfo,
+  filename: string = "clash.yaml",
+): Promise<Response> {
+  return new Response(stringify(config), {
+    headers: {
+      "Content-Disposition": `attachment; filename=${filename}`,
+      "Subscription-Userinfo": Object.keys(userInfo)
+        .map((key) => `${key}=${userInfo[key as keyof UserInfo]}`)
+        .join("; "),
+    },
+  });
 }

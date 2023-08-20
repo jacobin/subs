@@ -1,15 +1,19 @@
-import { stringify } from "yaml";
-import { Proxy, getProxies, makeConfig } from "./parser";
+import {
+  Subscription,
+  fetchSubscription,
+  makeConfig,
+  makeResponse,
+  mergeSubscriptions,
+} from "./parser";
 
 export async function GET(request: Request): Promise<Response> {
   const url: URL = new URL(request.url);
-  const subs: string[] = url.searchParams.getAll("subs");
-  const proxies: Proxy[] = (
-    await Promise.all(subs.map((sub) => getProxies(sub)))
-  ).flat();
-  const config: any = await makeConfig(proxies);
-  const response: Response = new Response(stringify(config), {
-    headers: { "Content-Disposition": "attachment; filename=clash.yaml" },
-  });
+  const subUrls: string[] = url.searchParams.getAll("subs");
+  const subs: Subscription[] = await Promise.all(
+    subUrls.map(fetchSubscription),
+  );
+  const sub: Subscription = await mergeSubscriptions(subs);
+  const config: any = await makeConfig(sub.proxies);
+  const response: Response = await makeResponse(config, sub.userInfo);
   return response;
 }
