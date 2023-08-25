@@ -39,10 +39,8 @@ async function getUserInfo(response: Response): Promise<UserInfo> {
     expire: 0,
   };
   const header: string = response.headers.get("Subscription-Userinfo") || "";
-  console.log(header);
   for (const pair of header.split(";")) {
     const [key, value] = pair.split("=").map((s) => s.trim());
-    console.log(key, parseInt(value));
     userInfo[key as keyof UserInfo] = parseInt(value);
   }
   return userInfo;
@@ -80,6 +78,22 @@ export async function makeConfig(proxies: Proxy[]): Promise<any> {
   const names: string[] = proxies.map((proxy) => proxy.name);
   const groups: Record<string, string[]> = await groupProxies(names);
   return {
+    "mixed-port": 57890,
+    "allow-lan": false,
+    ipv6: true,
+    "external-controller": "0.0.0.0:59090",
+    "external-ui": "/usr/share/yacd",
+    secret: "secret",
+    dns: {
+      enable: true,
+      nameserver: ["101.6.6.6", "1.1.1.1"],
+      fallback: [
+        "185.222.222.222",
+        "45.11.45.11",
+        "tls://dot.sb",
+        "https://doh.dns.sb/dns-query",
+      ],
+    },
     proxies: proxies,
     "proxy-groups": [
       {
