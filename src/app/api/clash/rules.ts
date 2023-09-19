@@ -1,4 +1,7 @@
+// https://github.com/Loyalsoldier/clash-rules
+
 export const RULES: string[] = [
+  "DOMAIN,byr.pt,DIRECT",
   "RULE-SET,applications,DIRECT",
   "DOMAIN,clash.razord.top,DIRECT",
   "DOMAIN,yacd.haishan.me,DIRECT",
@@ -6,7 +9,7 @@ export const RULES: string[] = [
   "RULE-SET,reject,REJECT",
   "RULE-SET,icloud,DIRECT",
   "RULE-SET,apple,DIRECT",
-  "RULE-SET,google,DIRECT",
+  "RULE-SET,google,PROXY",
   "RULE-SET,proxy,PROXY",
   "RULE-SET,direct,DIRECT",
   "RULE-SET,lancidr,DIRECT",
