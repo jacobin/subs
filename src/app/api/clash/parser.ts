@@ -86,12 +86,25 @@ export async function makeConfig(proxies: Proxy[]): Promise<any> {
     secret: "secret",
     dns: {
       enable: true,
-      nameserver: ["101.6.6.6", "1.1.1.1"],
+      nameserver: [
+        // 1.1.1.1
+        "https://cloudflare-dns.com/dns-query",
+        "tls://[2606:4700:4700::1111]:853",
+        "tls://[2606:4700:4700::1001]:853",
+        "tls://1.1.1.1:853",
+        "tls://1.0.0.1:853",
+        // tuna.moe
+        "[2001:da8::666]:53",
+        "101.6.6.6",
+      ],
       fallback: [
+        // dns.sb
+        "https://doh.dns.sb/dns-query",
+        "tls://dot.sb",
+        "[2a09::]:53",
+        "[2a11::]:53",
         "185.222.222.222",
         "45.11.45.11",
-        "tls://dot.sb",
-        "https://doh.dns.sb/dns-query",
       ],
     },
     proxies: proxies,
