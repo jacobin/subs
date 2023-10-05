@@ -18,7 +18,7 @@ repos:
       - id: cmake-format
       - id: cmake-lint
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: 3.9.0
+    rev: 3.10.0
     hooks:
       - id: commitizen
   - repo: https://github.com/pre-commit/mirrors-clang-format
@@ -69,7 +69,7 @@ repos:
         args:
           - --profile=black
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.26.3
+    rev: 0.27.0
     hooks:
       - id: check-azure-pipelines
       - id: check-bamboo-spec

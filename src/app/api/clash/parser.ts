@@ -82,10 +82,10 @@ export async function makeConfig(proxies: Proxy[]): Promise<any> {
     "allow-lan": false,
     ipv6: true,
     "external-controller": "0.0.0.0:59090",
-    "external-ui": "/usr/share/yacd",
     secret: "secret",
     dns: {
       enable: true,
+      ipv6: true,
       nameserver: [
         // 1.1.1.1
         "https://cloudflare-dns.com/dns-query",

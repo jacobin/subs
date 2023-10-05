@@ -9,7 +9,7 @@ export const RULES: string[] = [
   "RULE-SET,reject,REJECT",
   "RULE-SET,icloud,DIRECT",
   "RULE-SET,apple,DIRECT",
-  "RULE-SET,google,PROXY",
+  // "RULE-SET,google,DIRECT",
   "RULE-SET,proxy,PROXY",
   "RULE-SET,direct,DIRECT",
   "RULE-SET,lancidr,DIRECT",
