@@ -1,7 +1,9 @@
+// https://dreamacro.github.io/clash/configuration/rules.html
 // https://github.com/Loyalsoldier/clash-rules
 
 export const RULES: string[] = [
-  "DOMAIN,byr.pt,DIRECT",
+  "DOMAIN-SUFFIX,byr.pt,DIRECT",
+  "DOMAIN-KEYWORD,ipv6,DIRECT",
   "RULE-SET,applications,DIRECT",
   "DOMAIN,clash.razord.top,DIRECT",
   "DOMAIN,yacd.haishan.me,DIRECT",
