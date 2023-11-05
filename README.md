@@ -1,3 +1,5 @@
+# :coffin: R.I.P.
+
 # subs
 
 ## API Reference
